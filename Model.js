@@ -5,8 +5,9 @@ export class Model extends EventTarget{
     clicked;
     threeopened;
     extra = 0;
-    start;
-    end;
+    time = 0;
+    intvid = 0;
+    
     constructor(){
         super();
         //this.used = new Array(81).fill(0);
@@ -30,11 +31,16 @@ export class Model extends EventTarget{
         }
         this.startgame(this.clicked);
         let p = document.getElementsByClassName('counter');
-        p[0].innerHTML = "Cards remaining in deck: " + (81 - this.count);
+        p[1].innerHTML = "Cards remaining in deck: " + (81 - this.count);
+        
     }
     
-    
     startgame = function(clicked ){
+        if (this.intvid == 0){
+            this.intvid = setInterval(()=>{
+                document.getElementsByClassName('counter')[0].innerHTML = 'Time: ' + (++this.time);
+            }, 1000);
+        }
         this.threeopened = false;
         this.cards = this.cards.sort((a,b)=>
             0.5 - Math.random()
@@ -50,8 +56,10 @@ export class Model extends EventTarget{
 
         let buty = document.getElementsByClassName('new');
         buty[0].onclick = ()=>{
+            this.time = 0;
+            document.getElementsByClassName('counter')[0].innerHTML = 'Time: ' + (this.time);
             let msgy = document.getElementsByClassName('msg')[0];
-            msgy.innerHTML = '';
+            msgy.innerHTML = 'Click a box, press qwer, asdf, zxcv';
             this.count = 0;
             this.threeopened = false;
             this.extra = 0;
@@ -122,13 +130,12 @@ export class Model extends EventTarget{
                 a.append(newbox);
             }
             let p = document.getElementsByClassName('counter');
-            p[0].innerHTML = "Cards remaining in deck: " + (81 - this.count);
+            p[1].innerHTML = "Cards remaining in deck: " + (81 - this.count);
 
-            this.start = new Date();
+            
         };
 
-
-        
+        this.time = 0;
     };
 
 
@@ -213,17 +220,15 @@ export class Model extends EventTarget{
                     
                     if (this.count >= 81){
                         if (!this.bigcomp()){
-                            this.end = new Date();
-                            let diff = this.end-this.start;
-                            diff /= 1000;
+                            clearInterval(this.intvid);
+                            this.intvid = 0;
                             b[0].innerHTML = 'YOU WIN!!';
-                            b[0].append('Your time was: ', diff, ' seconds');
                             //let tab = document.getElementsByClassName('bigtable');
                         }
                         
                     }
                     let p = document.getElementsByClassName('counter');
-                    p[0].innerHTML = "Cards remaining in deck: " + (81 - this.count);
+                    p[1].innerHTML = "Cards remaining in deck: " + (81 - this.count);
                 }
             }
             else{
